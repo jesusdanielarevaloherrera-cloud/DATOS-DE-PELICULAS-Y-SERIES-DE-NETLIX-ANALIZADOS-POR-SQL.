@@ -1,23 +1,24 @@
 # DATOS-DE-PELICULAS-Y-SERIES-DE-NETLIX-ANALIZADOS-POR-SQL.
 DATOS DE PELICULAS Y SERIES DE NETLIX ANALIZADOS POR SQL.
 
-Resumen
+### Resumen
 
 Este proyecto implica un análisis exhaustivo de los datos de películas y series de Netflix utilizando SQL. El objetivo es extraer información valiosa y responder a diversas preguntas empresariales basadas en el conjunto de datos. El siguiente README ofrece un relato detallado de los objetivos del proyecto, problemas de negocio, soluciones, hallazgos y conclusiones.
 
-Objetivos
+###Objetivos
 
 Analiza la distribución de los tipos de contenido (películas vs series de televisión).
 Identifica las valoraciones más comunes para películas y series de televisión.
 Lista y analiza el contenido según años de lanzamiento, países y duraciones.
 Explora y categoriza el contenido según criterios y palabras clave específicas.
 
-Conjunto de datos
+###Conjunto de datos
 
-Los datos de este proyecto provienen del conjunto de datos de Kaggle:
+##Los datos de este proyecto provienen del conjunto de datos de Kaggle:
 
 Enlace al conjunto de datos: Conjunto de datos de películas
-Esquema
+##Esquema
+'''sql
 DROP TABLE IF EXISTS netflix;
 CREATE TABLE netflix
 (
@@ -34,6 +35,7 @@ CREATE TABLE netflix
     listed_in    VARCHAR(250),
     description  VARCHAR(550)
 );
+'''
 Problemas y soluciones empresariales
 1. Contar el número de películas frente a series de televisión
 SELECT 
