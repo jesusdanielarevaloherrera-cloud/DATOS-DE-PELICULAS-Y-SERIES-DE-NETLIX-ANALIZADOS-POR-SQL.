@@ -1,24 +1,23 @@
-# DATOS-DE-PELICULAS-Y-SERIES-DE-NETLIX-ANALIZADOS-POR-SQL.
-DATOS DE PELICULAS Y SERIES DE NETLIX ANALIZADOS POR SQL.
 
-### Resumen
+## Overview
+This project involves a comprehensive analysis of Netflix's movies and TV shows data using SQL. The goal is to extract valuable insights and answer various business questions based on the dataset. The following README provides a detailed account of the project's objectives, business problems, solutions, findings, and conclusions.
 
-Este proyecto implica un análisis exhaustivo de los datos de películas y series de Netflix utilizando SQL. El objetivo es extraer información valiosa y responder a diversas preguntas empresariales basadas en el conjunto de datos. El siguiente README ofrece un relato detallado de los objetivos del proyecto, problemas de negocio, soluciones, hallazgos y conclusiones.
+## Objectives
 
-###Objetivos
+- Analyze the distribution of content types (movies vs TV shows).
+- Identify the most common ratings for movies and TV shows.
+- List and analyze content based on release years, countries, and durations.
+- Explore and categorize content based on specific criteria and keywords.
 
-Analiza la distribución de los tipos de contenido (películas vs series de televisión).
-Identifica las valoraciones más comunes para películas y series de televisión.
-Lista y analiza el contenido según años de lanzamiento, países y duraciones.
-Explora y categoriza el contenido según criterios y palabras clave específicas.
+## Dataset
 
-###Conjunto de datos
+The data for this project is sourced from the Kaggle dataset:
 
-##Los datos de este proyecto provienen del conjunto de datos de Kaggle:
+- **Dataset Link:** [Movies Dataset](https://www.kaggle.com/datasets/shivamb/netflix-shows?resource=download)
 
-Enlace al conjunto de datos: Conjunto de datos de películas
-##Esquema
-'''sql
+## Schema
+
+```sql
 DROP TABLE IF EXISTS netflix;
 CREATE TABLE netflix
 (
@@ -35,17 +34,25 @@ CREATE TABLE netflix
     listed_in    VARCHAR(250),
     description  VARCHAR(550)
 );
-'''
-Problemas y soluciones empresariales
-1. Contar el número de películas frente a series de televisión
+```
+
+## Business Problems and Solutions
+
+### 1. Count the Number of Movies vs TV Shows
+
+```sql
 SELECT 
     type,
     COUNT(*)
 FROM netflix
 GROUP BY 1;
-Objetivo: Determina la distribución de los tipos de contenido en Netflix.
+```
 
-2. Encontrar la valoración más común para películas y series de televisión
+**Objective:** Determine the distribution of content types on Netflix.
+
+### 2. Find the Most Common Rating for Movies and TV Shows
+
+```sql
 WITH RatingCounts AS (
     SELECT 
         type,
@@ -67,15 +74,23 @@ SELECT
     rating AS most_frequent_rating
 FROM RankedRatings
 WHERE rank = 1;
-Objetivo: Identifica la valoración que aparece con más frecuencia para cada tipo de contenido.
+```
 
-3. Listar todas las películas estrenadas en un año específico (por ejemplo, 2020)
+**Objective:** Identify the most frequently occurring rating for each type of content.
+
+### 3. List All Movies Released in a Specific Year (e.g., 2020)
+
+```sql
 SELECT * 
 FROM netflix
 WHERE release_year = 2020;
-Objetivo: Recupera todas las películas estrenadas en un año específico.
+```
 
-4. Encuentra los 5 países con más contenido en Netflix
+**Objective:** Retrieve all movies released in a specific year.
+
+### 4. Find the Top 5 Countries with the Most Content on Netflix
+
+```sql
 SELECT * 
 FROM
 (
@@ -88,23 +103,35 @@ FROM
 WHERE country IS NOT NULL
 ORDER BY total_content DESC
 LIMIT 5;
-Objetivo: Identifica los 5 países con el mayor número de elementos de contenido.
+```
 
-5. Identificar la película más larga
+**Objective:** Identify the top 5 countries with the highest number of content items.
+
+### 5. Identify the Longest Movie
+
+```sql
 SELECT 
     *
 FROM netflix
 WHERE type = 'Movie'
 ORDER BY SPLIT_PART(duration, ' ', 1)::INT DESC;
-Objetivo: Encuentra la película con la duración más larga.
+```
 
-6. Encontrar contenido añadido en los últimos 5 años
+**Objective:** Find the movie with the longest duration.
+
+### 6. Find Content Added in the Last 5 Years
+
+```sql
 SELECT *
 FROM netflix
 WHERE TO_DATE(date_added, 'Month DD, YYYY') >= CURRENT_DATE - INTERVAL '5 years';
-Objetivo: Recuperar contenido añadido a Netflix en los últimos 5 años.
+```
 
-7. Encuentra todas las películas/series del director 'Rajiv Chilaka'
+**Objective:** Retrieve content added to Netflix in the last 5 years.
+
+### 7. Find All Movies/TV Shows by Director 'Rajiv Chilaka'
+
+```sql
 SELECT *
 FROM (
     SELECT 
@@ -113,26 +140,37 @@ FROM (
     FROM netflix
 ) AS t
 WHERE director_name = 'Rajiv Chilaka';
-Objetivo: Lista de todo el contenido dirigido por 'Rajiv Chilaka'.
+```
 
-8. Listar todas las series de televisión con más de 5 temporadas
+**Objective:** List all content directed by 'Rajiv Chilaka'.
+
+### 8. List All TV Shows with More Than 5 Seasons
+
+```sql
 SELECT *
 FROM netflix
 WHERE type = 'TV Show'
   AND SPLIT_PART(duration, ' ', 1)::INT > 5;
-Objetivo: Identifica series de televisión con más de 5 temporadas.
+```
 
-9. Contar el número de elementos de contenido en cada género
+**Objective:** Identify TV shows with more than 5 seasons.
+
+### 9. Count the Number of Content Items in Each Genre
+
+```sql
 SELECT 
     UNNEST(STRING_TO_ARRAY(listed_in, ',')) AS genre,
     COUNT(*) AS total_content
 FROM netflix
 GROUP BY 1;
-Objetivo: Cuenta el número de elementos de contenido de cada género.
+```
 
-10. Encuentra cada año y el número medio de contenido lanzado en India en Netflix.
-¡Volver al top 5 del año con mayor promedio de contenido lanzado!
+**Objective:** Count the number of content items in each genre.
 
+### 10.Find each year and the average numbers of content release in India on netflix. 
+return top 5 year with highest avg content release!
+
+```sql
 SELECT 
     country,
     release_year,
@@ -146,28 +184,44 @@ WHERE country = 'India'
 GROUP BY country, release_year
 ORDER BY avg_release DESC
 LIMIT 5;
-Objetivo: Calcula y clasifica los años según el número medio de publicaciones de contenido en India.
+```
 
-11. Listar todas las películas que son documentales
+**Objective:** Calculate and rank years by the average number of content releases by India.
+
+### 11. List All Movies that are Documentaries
+
+```sql
 SELECT * 
 FROM netflix
 WHERE listed_in LIKE '%Documentaries';
-Objetivo: Recupera todas las películas clasificadas como documentales.
+```
 
-12. Encontrar todo el contenido sin director
+**Objective:** Retrieve all movies classified as documentaries.
+
+### 12. Find All Content Without a Director
+
+```sql
 SELECT * 
 FROM netflix
 WHERE director IS NULL;
-Objetivo: Incluye contenido que no tenga director.
+```
 
-13. Descubre cuántas películas ha aparecido el actor 'Salman Khan' en los últimos 10 años
+**Objective:** List content that does not have a director.
+
+### 13. Find How Many Movies Actor 'Salman Khan' Appeared in the Last 10 Years
+
+```sql
 SELECT * 
 FROM netflix
 WHERE casts LIKE '%Salman Khan%'
   AND release_year > EXTRACT(YEAR FROM CURRENT_DATE) - 10;
-Objetivo: Cuenta el número de películas protagonizadas por 'Salman Khan' en los últimos 10 años.
+```
 
-14. Encuentra los 10 mejores actores que han aparecido en el mayor número de películas producidas en la India
+**Objective:** Count the number of movies featuring 'Salman Khan' in the last 10 years.
+
+### 14. Find the Top 10 Actors Who Have Appeared in the Highest Number of Movies Produced in India
+
+```sql
 SELECT 
     UNNEST(STRING_TO_ARRAY(casts, ',')) AS actor,
     COUNT(*)
@@ -176,9 +230,13 @@ WHERE country = 'India'
 GROUP BY actor
 ORDER BY COUNT(*) DESC
 LIMIT 10;
-Objetivo: Identifica a los 10 actores con más apariciones en películas producidas en India.
+```
 
-15. Categorizar el contenido en función de la presencia de palabras clave 'matar' y 'violencia'
+**Objective:** Identify the top 10 actors with the most appearances in Indian-produced movies.
+
+### 15. Categorize Content Based on the Presence of 'Kill' and 'Violence' Keywords
+
+```sql
 SELECT 
     category,
     COUNT(*) AS content_count
@@ -191,11 +249,16 @@ FROM (
     FROM netflix
 ) AS categorized_content
 GROUP BY category;
-Objetivo: Categoriza el contenido como 'Malo' si contiene 'matar' o 'violencia' y 'Bueno' en caso contrario. Cuenta el número de elementos en cada categoría.
+```
 
-Hallazgos y conclusión
-Distribución del contenido: El conjunto de datos contiene una amplia variedad de películas y series de televisión con distintas clasificaciones y géneros.
-Valoraciones comunes: Las información sobre las valoraciones más comunes proporcionan una idea del público objetivo del contenido.
-Perspectivas geográficas: Los principales países y la media de publicaciones de contenido en India destacan la distribución regional de contenido.
-Categorización de contenido: Categorizar el contenido en función de palabras clave específicas ayuda a entender la naturaleza del contenido disponible en Netflix.
-Este análisis ofrece una visión completa del contenido de Netflix y puede ayudar a informar la estrategia y la toma de decisiones de contenido.
+**Objective:** Categorize content as 'Bad' if it contains 'kill' or 'violence' and 'Good' otherwise. Count the number of items in each category.
+
+## Findings and Conclusion
+
+- **Content Distribution:** The dataset contains a diverse range of movies and TV shows with varying ratings and genres.
+- **Common Ratings:** Insights into the most common ratings provide an understanding of the content's target audience.
+- **Geographical Insights:** The top countries and the average content releases by India highlight regional content distribution.
+- **Content Categorization:** Categorizing content based on specific keywords helps in understanding the nature of content available on Netflix.
+
+
+
